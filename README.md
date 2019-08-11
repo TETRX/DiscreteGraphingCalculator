@@ -1,0 +1,1 @@
+Discrete Graphing Calculator is a tool for graphing out functions on the natural numbers.
