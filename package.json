@@ -1,0 +1,16 @@
+{
+  "name": "dgc",
+  "version": "1.0.0",
+  "description": "Discrete Graphing Calculator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server"
+  },
+  "author": "Wojciech Węgrzynek",
+  "license": "ISC",
+  "dependencies": {
+    "lite-server": "^2.3.0",
+    "chart.js": "2.8.0"
+  }
+}
