@@ -12,6 +12,12 @@
             <span>a(n)=</span>
             <input type="text" id="a(n)">
             <button type="submit" class="btn btn-log btn-primary  mr-1" onclick="calculateA()">Submit</button>
+            <button type="submit" id="recursive" class="btn btn-log btn-info  mr-1">Recursive</button><br>
+            <div id="base">
+                <span id="baseDisplay">a(0)=</span>
+                <input type="number" id="baseInput">
+                <button type="submit" class="btn btn-log btn-success mr-1" id="baseSubmit">Submit</button>
+            </div>
         </div>
         <canvas id="myChart" width="400" height="400"></canvas>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
