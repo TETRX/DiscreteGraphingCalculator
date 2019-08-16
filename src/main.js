@@ -14,6 +14,9 @@ $(document).ready(function(){
             }]
         }
     });
+    console.log(gcm(8,4,3))
+    console.log(gcm(3,8,4))
+    console.log(gcd(8,4,3))
     $("#base").toggle()
 
     $("#recursive").click(function(){
