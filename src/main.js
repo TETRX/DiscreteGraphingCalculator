@@ -23,6 +23,9 @@ $(document).ready(function(){
 
     $("#baseSubmit").click(function(){
         baseData.push($("#baseInput").val())
+        var y = baseData[base]
+        chart.data.datasets[0].data.push({x: base, y: y})
+        chart.update()
         base++;
         $("#baseDisplay").text('a('+base+')=')
     })
@@ -34,6 +37,7 @@ function calculateA(){ //called whenever Submit is pressed. Fills the chart with
     for(var i = 0; i<base; i++){
         var y = baseData[i]
         chart.data.datasets[0].data.push({x: i, y: y})
+        baseData.push(y)
     }
     for(var i = base; i<100; i++){
         var y = solve2(input,i)
@@ -74,7 +78,7 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
         console.log(n + " " + formula)
         formula = formula.replace(toBeChanged,baseData[index])
         console.log(n + " " + formula)
-    } //a(n-1)+a(n-2)
+    } 
     while(formula.indexOf('/')>-1){ //division
         var opIndex = formula.indexOf('/')
         var i = opIndex-1; //finds the first number
