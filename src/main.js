@@ -14,9 +14,6 @@ $(document).ready(function(){
             }]
         }
     });
-    console.log(gcm(8,4,3))
-    console.log(gcm(3,8,4))
-    console.log(gcd(8,4,3))
     $("#base").toggle()
 
     $("#recursive").click(function(){
@@ -51,7 +48,47 @@ function calculateA(){ //called whenever Submit is pressed. Fills the chart with
 }
 
 function solve2(equation,n){ //takes a string equation and a number n and evaluates equation for the given n eg.: n=6 equation: 100*n*n+10*n=36*100+10*6=3660
-    var formula = equation.replace(/n/g,n.toString(10)); //All calculations are made through modifications of the formula such that the value doesn't change, until only one number remains
+    var formula =equation
+    while(formula.indexOf(':')>-1){ //handle functions first, because of ','
+        var start = end = formula.indexOf(':')
+        end++
+        while(formula[end]!=':'){
+            end++
+        }
+        var command = formula.substr(start+1,end-start-1)
+        var bracketsOpen = 1;
+        var args = new Array()
+        var argStart=argEnd=end+2;
+        while(bracketsOpen >0){
+            while(formula[argEnd]!=','){
+                argEnd++
+                if(formula[argEnd]==')'){
+                    bracketsOpen--
+                    if(bracketsOpen==0){
+                        break;
+                    }
+                }
+                if(formula[argEnd]=='('){
+                    bracketsOpen++
+                }
+            }
+            var argString=formula.substr(argStart,argEnd-argStart)
+            args.push(solve2(argString,n))
+            argStart=++argEnd
+        }
+        var result
+        switch(command){
+            case "gcd":
+                result=gcd(...args)
+                break;
+            case "gcm":
+                result=gcm(...args)
+                break;
+        }
+        var allOfFunction= formula.substr(start,argEnd-start)
+        formula=formula.replace(allOfFunction,result)
+    }
+    var formula = formula.replace(/n/g,n.toString(10)); //All calculations are made through modifications of the formula such that the value doesn't change, until only one number remains
     while(formula.indexOf('(')>-1){ //handle brackets first, useful for complicated recursion as well
         var i = formula.indexOf('(')
         var j = i;
