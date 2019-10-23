@@ -3,6 +3,9 @@ var chart
 var base=0
 var baseData = new Array();
 
+const syntax = "SYNTAX ERROR"
+const upperBoundOnUpperBound = 1000;
+
 $(document).ready(function(){
     var ctx = document.getElementById('myChart');
     chart = new Chart(ctx, {
@@ -41,7 +44,17 @@ function calculateA(){ //called whenever Submit is pressed. Fills the chart with
     }
     var upperBound = 100;
     if(document.getElementById("upperBound").value!=""){
-        upperBound=parseInt(document.getElementById("upperBound").value);
+        try{
+            upperBound=parseInt(document.getElementById("upperBound").value);
+        }
+        catch(err){
+            window.alert(err)
+            return;
+        }
+        if(upperBound>upperBoundOnUpperBound){
+            window.alert("Upper bound cannot exceed: " + upperBoundOnUpperBound)
+            return
+        }
     }
     for(var i = base; i<upperBound; i++){
         var y;
@@ -57,7 +70,6 @@ function calculateA(){ //called whenever Submit is pressed. Fills the chart with
     chart.update()
 }
 
-const syntax = "SYNTAX ERROR"
 
 function solve2(equation,n){ //takes a string equation and a number n and evaluates equation for the given n eg.: n=6 equation: 100*n*n+10*n=36*100+10*6=3660
     var formula =equation
