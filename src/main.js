@@ -39,13 +39,25 @@ function calculateA(){ //called whenever Submit is pressed. Fills the chart with
         chart.data.datasets[0].data.push({x: i, y: y})
         baseData.push(y)
     }
-    for(var i = base; i<100; i++){
-        var y = solve2(input,i)
+    var upperBound = 100;
+    if(document.getElementById("upperBound").value!=""){
+        upperBound=parseInt(document.getElementById("upperBound").value);
+    }
+    for(var i = base; i<upperBound; i++){
+        var y;
+        try{
+            y = solve2(input,i)
+        }catch(err){
+            window.alert(err)
+            return;
+        }
         chart.data.datasets[0].data.push({x: i, y: y})
         baseData.push(y)
     }
     chart.update()
 }
+
+const syntax = "SYNTAX ERROR"
 
 function solve2(equation,n){ //takes a string equation and a number n and evaluates equation for the given n eg.: n=6 equation: 100*n*n+10*n=36*100+10*6=3660
     var formula =equation
@@ -54,6 +66,9 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
         end++
         while(formula[end]!=':'){
             end++
+            if(end>formula.length){
+                throw syntax;
+            }
         }
         var command = formula.substr(start+1,end-start-1)
         var bracketsOpen = 1;
@@ -62,6 +77,9 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
         while(bracketsOpen >0){
             while(formula[argEnd]!=','){
                 argEnd++
+                if(argEnd>formula.length){
+                    throw syntax;
+                }
                 if(formula[argEnd]==')'){
                     bracketsOpen--
                     if(bracketsOpen==0){
@@ -84,6 +102,8 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
             case "gcm":
                 result=gcm(...args)
                 break;
+            default:
+                throw syntax;
         }
         var allOfFunction= formula.substr(start,argEnd-start)
         formula=formula.replace(allOfFunction,result)
@@ -95,6 +115,9 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
         var bracketsOpen = 1;
         while(bracketsOpen >0){// find the closing bracket
             j++ 
+            if(j>formula.length){
+                throw syntax;
+            }
             if(formula[j]==')'){
                 bracketsOpen--
             }
@@ -104,17 +127,36 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
         }
         var withBrackets = formula.substr(i,j-i+1)
         var inBrackets = formula.substr(i+1,j-i-1)
-        formula = formula.replace(withBrackets,solve2(inBrackets,0)) //replace an expression in brackets with its evaluation, the value of n doesn't matter
+        try{
+            formula = formula.replace(withBrackets,solve2(inBrackets,0)) //replace an expression in brackets with its evaluation, the value of n doesn't matter
+        }
+        catch(err){
+            throw syntax;
+        }
     }
     while(formula.indexOf('a')>-1){ //recursion
         var i=formula.indexOf('a')+1
         var hold=i-1
         while(formula[i]>='0' && formula[i]<='9'){
             i++
+            if(i>formula.length){
+                break;
+            }
+            if(formula[i]=='.'){
+                throw syntax;
+            }
+        }
+        if(i=hold+1){
+            throw syntax;
         }
         var toBeChanged = formula.substr(hold,i-hold);
         console.log(toBeChanged)
-        var index = parseInt(formula.substr(hold+1,i-hold-1));
+        var index;
+        try{
+             index = parseInt(formula.substr(hold+1,i-hold-1));
+        } catch(err){
+            throw syntax;
+        }
         console.log(n + " " + formula)
         formula = formula.replace(toBeChanged,baseData[index])
         console.log(n + " " + formula)
@@ -125,16 +167,23 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
         while(i>=0 && (formula[i]<='9' && formula[i]>='0' || formula[i]=='.' || //evaluates whether formula[i] is still a part of the first argument and thus finds the first digit/sign
         ( formula[i]=='-' && ( i==0 || formula[i-1]=='-' || formula[i-1]=='/' || formula[i-1]=='*' || formula[i-1]=='+')))){ //of firstArg.
             i--
-        }   
+            
+        }      
+        if(i==opIndex-1){
+            throw syntax
+        }
         var firstArg =  parseFloat(formula.substr(i+1,opIndex-i-1));
         var j = opIndex+1; //finds the second number
         while(j<formula.length && (formula[j]<='9' && formula[j]>='0' || formula[j]=='.' || 
         ( formula[j]=='-' && (formula[j-1]=='-' || formula[j-1]=='/' || formula[j-1]=='*' || formula[j-1]=='+')))){
             j++
-        }   
+        }    
+        if(j==opIndex+1){
+            throw syntax
+        }
         var secondArg =  parseFloat(formula.substr(opIndex+1,j-opIndex-1));
         if(secondArg==0){
-            return 0;
+            throw syntax;
         }
         var toBeChanged = formula.substr(i+1,j-i-1);
         formula=formula.replace(toBeChanged,firstArg/secondArg) // replaces them with the evaluation
@@ -146,12 +195,18 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
         ( formula[i]=='-' && (i==0 || formula[i-1]=='-' || formula[i-1]=='/' || formula[i-1]=='*' || formula[i-1]=='+')))){
             i--
         }   
+        if(i==opIndex-1){
+            throw syntax
+        }   
         var firstArg = parseFloat(formula.substr(i+1,opIndex-i-1));
         var j = opIndex+1;
         while(j<formula.length && (formula[j]<='9' && formula[j]>='0' || formula[j]=='.' || 
         ( formula[j]=='-' && (formula[j-1]=='-' || formula[j-1]=='/' || formula[j-1]=='*' || formula[j-1]=='+')))){
             j++
-        }   
+        }    
+        if(j==opIndex+1){
+            throw syntax
+        }
         var secondArg =  parseFloat(formula.substr(opIndex+1,j-opIndex-1));
         var toBeChanged = formula.substr(i+1,j-i-1);
         formula=formula.replace(toBeChanged,firstArg*secondArg)
@@ -163,12 +218,18 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
         ( formula[i]=='-' && ( i==0 || formula[i-1]=='-' || formula[i-1]=='/' && formula[i-1]=='*'&& formula[i-1]=='+')))){
             i--
         }   
+        if(i==opIndex-1){
+            throw syntax
+        }
         var firstArg =  parseFloat(formula.substr(i+1,opIndex-i-1))
         var j = opIndex+1;
         while(j<formula.length && (formula[j]<='9' && formula[j]>='0' || formula[j]=='.' || 
         ( formula[j]=='-' && (formula[j-1]=='-' || formula[j-1]=='/' || formula[j-1]=='*'|| formula[j-1]=='+' )))){
             j++
-        }   
+        }    
+        if(j==opIndex+1){
+            throw syntax
+        }
         var secondArg =  parseFloat(formula.substr(opIndex+1,j-opIndex-1));
         var toBeChanged = formula.substr(i+1,j-i-1);
         formula=formula.replace(toBeChanged,firstArg-secondArg)
@@ -179,17 +240,27 @@ function solve2(equation,n){ //takes a string equation and a number n and evalua
         while(i>=0 && (formula[i]<='9' && formula[i]>='0' || formula[i]=='.' || 
         ( formula[i]=='-' && (i==0 || formula[i-1]=='-' || formula[i-1]=='/' || formula[i-1]=='*' || formula[i-1]=='+')))){
             i--
-        }   
+        }      
+        if(i==opIndex-1){
+            throw syntax
+        }
         var firstArg =  parseFloat(formula.substr(i+1,opIndex-i-1))
         var j = opIndex+1;
         while(j<formula.length && (formula[j]<='9' && formula[j]>='0' || formula[j]=='.' || 
         ( formula[j]=='-' && (formula[j-1]=='-' || formula[j-1]=='/' || formula[j-1]=='*' || formula[j-1]=='+')))){
             j++
         }   
+        if(j==opIndex+1){
+            throw syntax
+        }
         var secondArg =  parseFloat(formula.substr(opIndex+1,j-opIndex-1));
         var toBeChanged = formula.substr(i+1,j-i-1);
         formula=formula.replace(toBeChanged,firstArg+secondArg)
     }
-    return parseFloat(formula)
+    var ret = parseFloat(formula);
+    if(ret==NaN){
+        throw syntax;
+    }
+    return ret
 }
 
