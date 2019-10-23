@@ -1,6 +1,18 @@
+const gcdSyntax = ":gcd: SYNTAX ERROR"
+const gcmSyntax = ":gcm: SYNTAX ERROR"
+
 function gcd(){
+    if(arguments.length==1){
+        if(!Number.isInteger(argument[0])){
+            throw gcdSyntax;
+        }
+        return argument[0];
+    }
     if(arguments.length==2){
         var x= arguments[0], y=arguments[1]
+        if(!Number.isInteger(x) || !Number.isInteger(y)){
+            throw gcdSyntax;
+        }
         if(x%y==0){
             return y
         }
@@ -18,6 +30,9 @@ function gcd(){
     var i=0
     if(arguments.length%2==1){
         newArg.push(arguments[0])
+        if(!Number.isInteger(arguments[0])){
+            throw gcdSyntax;
+        }
         i++
     }
     for(;i<arguments.length;i+=2){
@@ -29,7 +44,13 @@ function gcd(){
 function gcm(){
     if(arguments.length==2){
         var x= arguments[0], y=arguments[1]
-        return (x*y)/gcd(x,y)
+        try{
+             return (x*y)/gcd(x,y)
+    
+        }
+        catch(err){
+            throw gcmSyntax;
+        }
     }
     var newArg = new Array()
     var i=0

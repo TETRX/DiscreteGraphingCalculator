@@ -1,1 +1,1 @@
-Discrete Graphing Calculator is a tool for graphing out functions on the natural numbers.
+DGC(Discrete Graphing Calculator) is a tool for graphing out functions on the natural numbers on a small scale. Calculations are made by operating on string. For specification on syntax open syntax.md.
